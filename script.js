@@ -96,35 +96,90 @@ const training = [
     
     // Bar Chart
     
-    const monthly={};
-    
-    training.forEach(x=>{
-    
-    const month=x.date.substring(0,7);
-    
-    monthly[month]=(monthly[month]||0)+1;
-    
+    // ======================
+// Monthly Bar Chart
+// ======================
+
+const monthly = {};
+
+training.forEach(session => {
+
+    const date = new Date(session.date);
+
+    const month = date.toLocaleString("default", {
+        month: "short"
     });
-    
-    new Chart(document.getElementById("barChart"),{
-    
-    type:"bar",
-    
-    data:{
-    
-    labels:Object.keys(monthly),
-    
-    datasets:[{
-    
-    label:"Sessions",
-    
-    data:Object.values(monthly)
-    
-    }]
-    
+
+    monthly[month] = (monthly[month] || 0) + 1;
+
+});
+
+new Chart(document.getElementById("barChart"), {
+
+    type: "bar",
+
+    data: {
+
+        labels: Object.keys(monthly),
+
+        datasets: [{
+
+            label: "Training Sessions",
+
+            data: Object.values(monthly),
+
+            barPercentage: 0.45,
+
+            categoryPercentage: 0.55,
+
+            borderRadius: 6
+
+        }]
+
+    },
+
+    options: {
+
+        responsive: true,
+
+        plugins: {
+
+            legend: {
+                display: false
+            }
+
+        },
+
+        scales: {
+
+            y: {
+
+                beginAtZero: true,
+
+                ticks: {
+
+                    stepSize: 1,
+
+                    precision: 0
+
+                }
+
+            }
+
+        }
+
     }
+
+});
+    datasets: [{
+        label: "Training Sessions",
+        data: Object.values(monthly),
     
-    });
+        barPercentage: 0.45,
+        categoryPercentage: 0.55,
+    
+        borderRadius: 6
+    }]
     
     // Journal
     
