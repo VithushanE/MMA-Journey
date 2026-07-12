@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MMA Journey Tracker</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+<header>
+    <h1>🥊 MMA Journey Tracker</h1>
+    <p>Track your martial arts progress</p>
+</header>
+
+<div class="dashboard">
+
+    <div class="stats">
+
+        <div class="card">
+            <h2 id="sessions">0</h2>
+            <p>Total Sessions</p>
+        </div>
+
+        <div class="card">
+            <h2 id="hours">0</h2>
+            <p>Total Hours</p>
+        </div>
+
+        <div class="card">
+            <h2 id="month">0</h2>
+            <p>Sessions This Month</p>
+        </div>
+
+        <div class="card">
+            <h2 id="styles">0</h2>
+            <p>Martial Arts Trained</p>
+        </div>
+
+    </div>
+
+    <div class="charts">
+
+        <div class="chart-box">
+            <h3>Training Distribution</h3>
+            <canvas id="pieChart"></canvas>
+        </div>
+
+        <div class="chart-box">
+            <h3>Monthly Training</h3>
+            <canvas id="barChart"></canvas>
+        </div>
+
+    </div>
+
+</div>
+
+<div class="container">
+
+    <div class="table-section">
+
+        <h2>Training Log</h2>
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Martial Art</th>
+                    <th>Hours</th>
+                </tr>
+            </thead>
+
+            <tbody id="trainingTable">
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <div class="journal">
+
+        <h2>Training Journal</h2>
+
+        <textarea id="journalText" placeholder="Write today's reflections..."></textarea>
+
+        <button onclick="saveJournal()">
+            Save Entry
+        </button>
+
+        <h3>Latest Entry</h3>
+
+        <div id="savedEntry"></div>
+
+    </div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
