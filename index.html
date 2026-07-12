@@ -84,20 +84,72 @@
 
     </div>
 
-    <div class="journal">
+    <div class="journal-card">
 
-        <h2>Training Journal</h2>
-
-        <textarea id="journalText" placeholder="Write today's reflections..."></textarea>
-
-        <button onclick="saveJournal()">
-            Save Entry
-        </button>
-
-        <h3>Latest Entry</h3>
-
-        <div id="savedEntry"></div>
-
+        <h2>Add Training Journal Entry</h2>
+    
+        <form id="journalForm">
+    
+            <div class="form-group">
+    
+                <label>Date</label>
+    
+                <input
+                    type="date"
+                    id="entryDate"
+                    required
+                >
+    
+            </div>
+    
+            <div class="form-group">
+    
+                <label>Martial Art</label>
+    
+                <select id="martialArt" required>
+    
+                    <option value="">Select One</option>
+    
+                    <option>Muay Thai</option>
+    
+                    <option>Brazilian Jiu-Jitsu</option>
+    
+                    <option>Boxing</option>
+    
+                    <option>MMA</option>
+    
+                    <option>Wrestling</option>
+    
+                    <option>Judo</option>
+    
+                    <option>Kickboxing</option>
+    
+                    <option>Open Mat</option>
+    
+                </select>
+    
+            </div>
+    
+            <div class="form-group">
+    
+                <label>Class Notes</label>
+    
+                <textarea
+                    id="journalNotes"
+                    rows="8"
+                    placeholder="What did you learn today?"
+                ></textarea>
+    
+            </div>
+    
+            <button type="submit">
+    
+                Save Journal Entry
+    
+            </button>
+    
+        </form>
+    
     </div>
 
 </div>

@@ -146,3 +146,26 @@ const training = [
     }
     
     loadJournal();
+
+    document
+.getElementById("journalForm")
+.addEventListener("submit", function(e){
+
+    e.preventDefault();
+
+    const journalEntry = {
+
+        date:
+            document.getElementById("entryDate").value,
+
+        martialArt:
+            document.getElementById("martialArt").value,
+
+        notes:
+            document.getElementById("journalNotes").value
+
+    };
+
+    console.log(journalEntry);
+
+});
