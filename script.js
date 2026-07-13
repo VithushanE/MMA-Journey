@@ -1,226 +1,496 @@
-const training = [
+let training = [];
 
-    {
-    date:"2026-07-01",
-    style:"Muay Thai",
-    hours:1.5
-    },
-    
-    {
-    date:"2026-07-03",
-    style:"BJJ",
-    hours:1.5
-    },
-    
-    {
-    date:"2026-07-05",
-    style:"Muay Thai",
-    hours:2
-    },
-    
-    {
-    date:"2026-07-08",
-    style:"Boxing",
-    hours:1
-    },
-    
-    {
-    date:"2026-07-10",
-    style:"BJJ",
-    hours:1.5
+
+// ==========================
+// Load Training Data
+// ==========================
+
+
+async function loadTraining(){
+
+    try{
+
+        const response = await fetch(
+            "http://localhost:3000/api/training"
+        );
+
+
+        training = await response.json();
+
+
+        displayDashboard();
+
+
+    } catch(error){
+
+        console.error(
+            "Error loading training data:",
+            error
+        );
+
     }
-    
-    ];
-    
-    // Summary Stats
-    
-    document.getElementById("sessions").innerHTML = training.length;
-    
-    const totalHours = training.reduce((a,b)=>a+b.hours,0);
-    
-    document.getElementById("hours").innerHTML = totalHours;
-    
-    const currentMonth = new Date().getMonth()+1;
-    
-    const monthSessions = training.filter(x=>{
-    return new Date(x.date).getMonth()+1===currentMonth;
-    }).length;
-    
-    document.getElementById("month").innerHTML = monthSessions;
-    
-    const uniqueStyles = [...new Set(training.map(x=>x.style))];
-    
-    document.getElementById("styles").innerHTML = uniqueStyles.length;
-    
-    // Table
-    
-    const table=document.getElementById("trainingTable");
-    
-    training.forEach(x=>{
-    
-    table.innerHTML +=`
-    <tr>
-    <td>${x.date}</td>
-    <td>${x.style}</td>
-    <td>${x.hours}</td>
-    </tr>
-    `;
-    
+
+}
+
+
+loadTraining();
+
+
+
+// ==========================
+// Dashboard Display
+// ==========================
+
+function displayDashboard(){
+
+
+    // Total Sessions
+
+    document.getElementById("sessions").innerHTML =
+        training.length;
+
+
+
+    // Total Hours
+
+    const totalHours =
+        training.reduce(
+            (sum, session)=>{
+
+                return sum + 
+                (session.duration_minutes / 60);
+
+            },
+            0
+        );
+
+
+    document.getElementById("hours").innerHTML =
+        totalHours.toFixed(1);
+
+
+
+    // Sessions This Month
+
+    const currentMonth =
+        new Date().getMonth() + 1;
+
+
+
+    const monthSessions =
+        training.filter(session=>{
+
+
+            return new Date(
+                session.training_date
+            )
+            .getMonth()+1 === currentMonth;
+
+
+        }).length;
+
+
+
+    document.getElementById("month").innerHTML =
+        monthSessions;
+
+
+
+    // Unique Martial Arts
+
+    const uniqueStyles =
+        [
+            ...new Set(
+                training.map(
+                    session=>session.martial_art
+                )
+            )
+        ];
+
+
+
+    document.getElementById("styles").innerHTML =
+        uniqueStyles.length;
+
+
+
+    createTrainingTable();
+
+    createPieChart();
+
+    createBarChart();
+
+
+}
+
+
+
+// ==========================
+// Training Table
+// ==========================
+
+function createTrainingTable(){
+
+
+    const table =
+        document.getElementById(
+            "trainingTable"
+        );
+
+
+    table.innerHTML = "";
+
+
+
+    training.forEach(session=>{
+
+
+        table.innerHTML += `
+
+        <tr>
+
+            <td>
+                ${session.training_date}
+            </td>
+
+            <td>
+                ${session.martial_art}
+            </td>
+
+            <td>
+                ${(session.duration_minutes / 60).toFixed(1)}
+            </td>
+
+        </tr>
+
+        `;
+
+
     });
-    
-    // Pie Chart
-    
-    const counts={};
-    
-    training.forEach(x=>{
-    counts[x.style]=(counts[x.style]||0)+1;
-    });
-    
-    new Chart(document.getElementById("pieChart"),{
-    
-    type:"pie",
-    
-    data:{
-    
-    labels:Object.keys(counts),
-    
-    datasets:[{
-    
-    data:Object.values(counts)
-    
-    }]
-    
-    }
-    
-    });
-    
-    // Bar Chart
-    
-    // ======================
-// Monthly Bar Chart
-// ======================
 
-const monthly = {};
 
-training.forEach(session => {
+}
 
-    const date = new Date(session.date);
 
-    const month = date.toLocaleString("default", {
-        month: "short"
+
+
+// ==========================
+// Pie Chart
+// ==========================
+
+function createPieChart(){
+
+
+    const counts = {};
+
+
+
+    training.forEach(session=>{
+
+
+        const style =
+            session.martial_art;
+
+
+
+        counts[style] =
+            (counts[style] || 0) + 1;
+
+
     });
 
-    monthly[month] = (monthly[month] || 0) + 1;
 
-});
 
-new Chart(document.getElementById("barChart"), {
+    new Chart(
+        document.getElementById(
+            "pieChart"
+        ),
+        {
 
-    type: "bar",
+        type:"pie",
 
-    data: {
+        data:{
 
-        labels: Object.keys(monthly),
+            labels:
+                Object.keys(counts),
 
-        datasets: [{
 
-            label: "Training Sessions",
+            datasets:[{
 
-            data: Object.values(monthly),
+                data:
+                    Object.values(counts)
 
-            barPercentage: 0.45,
-
-            categoryPercentage: 0.55,
-
-            borderRadius: 6
-
-        }]
-
-    },
-
-    options: {
-
-        responsive: true,
-
-        plugins: {
-
-            legend: {
-                display: false
-            }
-
-        },
-
-        scales: {
-
-            y: {
-
-                beginAtZero: true,
-
-                ticks: {
-
-                    stepSize: 1,
-
-                    precision: 0
-
-                }
-
-            }
+            }]
 
         }
 
-    }
+    });
 
-});
-    datasets: [{
-        label: "Training Sessions",
-        data: Object.values(monthly),
-    
-        barPercentage: 0.45,
-        categoryPercentage: 0.55,
-    
-        borderRadius: 6
-    }]
-    
-    // Journal
-    
-    function saveJournal(){
-    
-    const text=document.getElementById("journalText").value;
-    
-    localStorage.setItem("journal",text);
-    
-    loadJournal();
-    
-    }
-    
-    function loadJournal(){
-    
-    document.getElementById("savedEntry").innerHTML=
-    localStorage.getItem("journal") || "No journal entry yet.";
-    
-    }
-    
-    loadJournal();
 
-    document
+}
+
+
+
+
+
+// ==========================
+// Monthly Bar Chart
+// ==========================
+
+function createBarChart(){
+
+
+    const monthly = {};
+
+
+
+    training.forEach(session=>{
+
+
+        const date =
+            new Date(
+                session.training_date
+            );
+
+
+
+        const month =
+            date.toLocaleString(
+                "default",
+                {
+                    month:"short"
+                }
+            );
+
+
+
+        monthly[month] =
+            (monthly[month] || 0) + 1;
+
+
+    });
+
+
+
+    new Chart(
+        document.getElementById(
+            "barChart"
+        ),
+        {
+
+
+        type:"bar",
+
+
+        data:{
+
+
+            labels:
+                Object.keys(monthly),
+
+
+            datasets:[{
+
+
+                label:
+                    "Training Sessions",
+
+
+                data:
+                    Object.values(monthly),
+
+
+                barPercentage:
+                    0.45,
+
+
+                categoryPercentage:
+                    0.55,
+
+
+                borderRadius:
+                    6
+
+
+            }]
+
+
+        },
+
+
+        options:{
+
+
+            responsive:true,
+
+
+            plugins:{
+
+
+                legend:{
+
+                    display:false
+
+                }
+
+
+            },
+
+
+            scales:{
+
+
+                y:{
+
+
+                    beginAtZero:true,
+
+
+                    ticks:{
+
+
+                        stepSize:1,
+
+
+                        precision:0
+
+
+                    }
+
+
+                }
+
+
+            }
+
+
+        }
+
+
+    });
+
+
+}
+
+
+
+
+
+// ==========================
+// Submit Journal Entry
+// ==========================
+
+document
 .getElementById("journalForm")
-.addEventListener("submit", function(e){
+.addEventListener(
+"submit",
+async function(e){
+
 
     e.preventDefault();
 
+
+
     const journalEntry = {
 
-        date:
-            document.getElementById("entryDate").value,
 
-        martialArt:
-            document.getElementById("martialArt").value,
+        martial_art:
+
+            document
+            .getElementById("martialArt")
+            .value,
+
+
+
+        duration_minutes:
+
+            90,
+
+
 
         notes:
-            document.getElementById("journalNotes").value
+
+            document
+            .getElementById("journalNotes")
+            .value
+
 
     };
 
-    console.log(journalEntry);
+
+console.log("Sending data:", journalEntry);
+    try{
+
+
+        const response =
+            await fetch(
+            "http://localhost:3000/api/training",
+            {
+
+
+            method:"POST",
+
+
+            headers:{
+
+                "Content-Type":
+                "application/json"
+
+            },
+
+
+            body:
+                JSON.stringify(
+                    journalEntry
+                )
+
+
+            });
+
+
+
+            if (!response.ok){
+
+                throw new Error(
+                    "Failed to save training"
+                );
+            
+            }
+            
+            
+            const result =
+                await response.json();
+
+
+
+        console.log(
+            "Saved:",
+            result
+        );
+
+
+
+        alert(
+            "Training session saved!"
+        );
+
+
+
+        location.reload();
+
+
+
+    }
+    catch(error){
+
+
+        console.error(
+            "Error saving training:",
+            error
+        );
+
+
+    }
+
 
 });
