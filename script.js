@@ -393,6 +393,10 @@ async function(e){
 
     const journalEntry = {
 
+        training_date:
+            document
+            .getElementById("entryDate")
+            .value,
 
         martial_art:
 
@@ -404,7 +408,7 @@ async function(e){
 
         duration_minutes:
 
-            90,
+            60,
 
 
 

@@ -43,6 +43,7 @@ app.get("/", (req, res) => {
 
 // Get training sessions
 
+
 app.get("/api/training", async (req, res) => {
 
     try {
@@ -82,25 +83,31 @@ app.post("/api/training", async (req, res) => {
     console.log("Body:", req.body);
 
     const {
+        training_date,
         martial_art,
         duration_minutes,
         notes
     } = req.body;
 
+
+    console.log("Date being inserted:", training_date);
+  
     try {
 
         const result = await pool.query(
             `
             INSERT INTO mma_training
             (
+                training_date,
                 martial_art,
                 duration_minutes,
                 notes
             )
-            VALUES ($1, $2, $3)
+            VALUES ($1, $2, $3, $4)
             RETURNING *;
             `,
             [
+                training_date,
                 martial_art,
                 duration_minutes,
                 notes
